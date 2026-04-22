@@ -84,6 +84,20 @@ A visual bar showing where the current price sits between the yearly high and lo
 
 ---
 
+
+## 🛠️ Tech Stack
+
+| Tool | What It Does | Cost |
+|---|---|---|
+| **Python + Flask** | Runs the local web server | Free |
+| **yfinance** | Fetches real stock data from Yahoo Finance | Free, no API key |
+| **Plotly.js** | Powers the interactive charts | Free |
+| **HTML + CSS + JS** | The frontend interface | Free |
+
+> 💡 No database, no accounts, no cloud costs. Everything runs on your machine.
+
+---
+
 ## 🚀 Getting Started
 
 ### What You'll Need
@@ -143,20 +157,7 @@ marketlens/
         └── app.js         ← The interactive behavior (charts, buttons, alerts)
 ```
 
----
 
-## 🛠️ Tech Stack
-
-| Tool | What It Does | Cost |
-|---|---|---|
-| **Python + Flask** | Runs the local web server | Free |
-| **yfinance** | Fetches real stock data from Yahoo Finance | Free, no API key |
-| **Plotly.js** | Powers the interactive charts | Free |
-| **HTML + CSS + JS** | The frontend interface | Free |
-
-> 💡 No database, no accounts, no cloud costs. Everything runs on your machine.
-
----
 
 ## 💡 Tips & Customization
 
