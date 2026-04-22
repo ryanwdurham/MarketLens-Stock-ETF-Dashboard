@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MarketLens — Stock & ETF Dashboard</title>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-mark">◈</span>
+    <span class="logo-text">MarketLens</span>
+  </div>
+
+  <div class="sidebar-search">
+    <input type="text" id="searchInput" placeholder="Ticker (AAPL, QQQ…)" autocomplete="off" />
+    <button id="searchBtn" title="Search">→</button>
+  </div>
+
+  <div class="sidebar-nav">
+    <button class="nav-btn active" data-page="overview">
+      <span class="nav-icon">▣</span> Overview
+    </button>
+    <button class="nav-btn" data-page="compare">
+      <span class="nav-icon">⊞</span> Compare
+    </button>
+    <button class="nav-btn" data-page="alerts">
+      <span class="nav-icon">◎</span> Alerts
+    </button>
+  </div>
+
+  <div class="sidebar-section-label">Quick Access</div>
+  <div class="quick-tickers">
+    {% for group, tickers in popular.items() %}
+    <div class="ticker-group-label">{{ group }}</div>
+    {% for t in tickers %}
+    <button class="quick-ticker" data-ticker="{{ t }}">{{ t }}</button>
+    {% endfor %}
+    {% endfor %}
+  </div>
+
+  <div class="sidebar-footer">
+    Data via Yahoo Finance · Delayed
+  </div>
+</nav>
+
+<!-- ── MOBILE HEADER ── -->
+<header class="mobile-header">
+  <button class="hamburger" id="hamburger">☰</button>
+  <span class="logo-text">◈ MarketLens</span>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<main class="main" id="main">
+
+  <!-- ══════ OVERVIEW PAGE ══════ -->
+  <section class="page active" id="page-overview">
+
+    <div class="page-header">
+      <div>
+        <div id="tickerDisplay" class="ticker-display">—</div>
+        <div id="nameDisplay" class="name-display">Select a ticker to begin</div>
+      </div>
+      <div class="price-block">
+        <div id="priceDisplay" class="price-display">—</div>
+        <div id="changeDisplay" class="change-display">—</div>
+      </div>
+    </div>
+
+    <!-- Period & MA controls -->
+    <div class="controls-bar">
+      <div class="period-group">
+        <button class="period-btn active" data-period="1M">1M</button>
+        <button class="period-btn" data-period="3M">3M</button>
+        <button class="period-btn" data-period="6M">6M</button>
+        <button class="period-btn active-default" data-period="1Y">1Y</button>
+        <button class="period-btn" data-period="3Y">3Y</button>
+        <button class="period-btn" data-period="5Y">5Y</button>
+      </div>
+      <div class="overlay-group">
+        <label class="toggle-label"><input type="checkbox" id="ma20" checked> <span>MA 20</span></label>
+        <label class="toggle-label"><input type="checkbox" id="ma50" checked> <span>MA 50</span></label>
+        <label class="toggle-label"><input type="checkbox" id="ma200" checked> <span>MA 200</span></label>
+        <label class="toggle-label"><input type="checkbox" id="showVolume"> <span>Volume</span></label>
+        <label class="toggle-label"><input type="checkbox" id="showRSI"> <span>RSI</span></label>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-card" id="mainChartCard">
+      <div id="mainChart" class="chart-area"></div>
+      <div class="chart-placeholder" id="chartPlaceholder">
+        <div class="placeholder-icon">◈</div>
+        <div class="placeholder-text">Enter a ticker symbol above to load chart data</div>
+        <div class="placeholder-sub">Try QQQ, VOO, AAPL, or any stock</div>
+        <div class="quick-start-btns">
+          <button class="qs-btn" data-ticker="QQQ">QQQ</button>
+          <button class="qs-btn" data-ticker="VOO">VOO</button>
+          <button class="qs-btn" data-ticker="VTI">VTI</button>
+          <button class="qs-btn" data-ticker="AAPL">AAPL</button>
+          <button class="qs-btn" data-ticker="NVDA">NVDA</button>
+        </div>
+      </div>
+      <div class="chart-loading" id="chartLoading">
+        <div class="spinner"></div>
+        <span>Loading market data…</span>
+      </div>
+    </div>
+
+    <!-- Stats cards -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card" id="stat-price">
+        <div class="stat-label">Current Price</div>
+        <div class="stat-value" id="sv-price">—</div>
+      </div>
+      <div class="stat-card" id="stat-change">
+        <div class="stat-label">Daily Change</div>
+        <div class="stat-value" id="sv-change">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">52W High</div>
+        <div class="stat-value" id="sv-high">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">52W Low</div>
+        <div class="stat-value" id="sv-low">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Volume</div>
+        <div class="stat-value" id="sv-volume">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Market Cap</div>
+        <div class="stat-value" id="sv-mcap">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">P/E Ratio</div>
+        <div class="stat-value" id="sv-pe">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Dividend Yield</div>
+        <div class="stat-value" id="sv-div">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Beta</div>
+        <div class="stat-value" id="sv-beta">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">30D Volatility</div>
+        <div class="stat-value" id="sv-vol">—</div>
+      </div>
+      <div class="stat-card trend-card" id="sv-trend-card">
+        <div class="stat-label">Trend Signal</div>
+        <div class="stat-value" id="sv-trend">—</div>
+      </div>
+    </div>
+
+    <!-- 52W Progress bar -->
+    <div class="range-card" id="rangeCard" style="display:none">
+      <div class="range-label-row">
+        <span id="rv-low">—</span>
+        <span class="range-title">52-Week Range</span>
+        <span id="rv-high">—</span>
+      </div>
+      <div class="range-bar-bg">
+        <div class="range-bar-fill" id="rangeBarFill"></div>
+        <div class="range-bar-marker" id="rangeBarMarker"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════ COMPARE PAGE ══════ -->
+  <section class="page" id="page-compare">
+    <div class="page-header">
+      <div>
+        <div class="ticker-display">Compare</div>
+        <div class="name-display">Side-by-side performance comparison</div>
+      </div>
+    </div>
+
+    <div class="compare-controls">
+      <div class="compare-inputs">
+        <input class="cmp-input" id="cmp1" placeholder="Ticker 1" value="QQQ" />
+        <input class="cmp-input" id="cmp2" placeholder="Ticker 2" value="VOO" />
+        <input class="cmp-input" id="cmp3" placeholder="Ticker 3" value="VTI" />
+        <input class="cmp-input" id="cmp4" placeholder="Ticker 4 (opt)" />
+        <input class="cmp-input" id="cmp5" placeholder="Ticker 5 (opt)" />
+      </div>
+      <div class="compare-options">
+        <div class="period-group">
+          <button class="period-btn" data-cperiod="1M">1M</button>
+          <button class="period-btn" data-cperiod="3M">3M</button>
+          <button class="period-btn" data-cperiod="6M">6M</button>
+          <button class="period-btn active" data-cperiod="1Y">1Y</button>
+          <button class="period-btn" data-cperiod="3Y">3Y</button>
+          <button class="period-btn" data-cperiod="5Y">5Y</button>
+        </div>
+        <label class="toggle-label big">
+          <input type="checkbox" id="normalizeToggle" checked>
+          <span>Normalize to $10,000</span>
+        </label>
+        <button class="run-compare-btn" id="runCompare">Compare →</button>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div id="compareChart" class="chart-area" style="min-height:420px"></div>
+      <div class="chart-loading" id="compareLoading">
+        <div class="spinner"></div>
+        <span>Fetching comparison data…</span>
+      </div>
+    </div>
+
+    <div class="compare-note">
+      <strong>Normalize mode</strong> starts all tickers at $10,000 so you can compare growth percentages fairly, regardless of share price.
+    </div>
+  </section>
+
+  <!-- ══════ ALERTS PAGE ══════ -->
+  <section class="page" id="page-alerts">
+    <div class="page-header">
+      <div>
+        <div class="ticker-display">Alerts</div>
+        <div class="name-display">Price threshold notifications (session-based)</div>
+      </div>
+    </div>
+
+    <div class="alerts-form card">
+      <h3>Create Alert</h3>
+      <div class="alert-row">
+        <input type="text" id="alertTicker" placeholder="Ticker (e.g. QQQ)" />
+        <select id="alertDir">
+          <option value="above">Price rises above</option>
+          <option value="below">Price falls below</option>
+        </select>
+        <input type="number" id="alertPrice" placeholder="Target price $" step="0.01" />
+        <button id="addAlertBtn" class="run-compare-btn">+ Add Alert</button>
+      </div>
+    </div>
+
+    <div id="alertsList" class="alerts-list"></div>
+    <div id="noAlerts" class="no-alerts-msg">No alerts set. Add one above.</div>
+
+  </section>
+
+</main>
+
+<!-- ── ALERT NOTIFICATION TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>
