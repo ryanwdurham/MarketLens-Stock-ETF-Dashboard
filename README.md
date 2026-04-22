@@ -1,3 +1,4 @@
+
 # ◈ MarketLens — Stock & ETF Dashboard
 
 > A clean, beginner-friendly stock tracker you can run on your own computer. No subscriptions. No ads. No confusing jargon. Just the data you need.
@@ -10,8 +11,12 @@
 ---
 
 ## 📸 Screenshots
+---
 
-> *(Add your own screenshots here after running the app! See the [Show It Off](#-showing-it-off-on-github) section below.)*
+<img width="1920" height="1020" alt="marketlens" src="https://github.com/user-attachments/assets/8acd378d-40f0-43ef-8ed4-9b5d787c9bad" />
+
+<img width="1920" height="1020" alt="marketlens2" src="https://github.com/user-attachments/assets/fbd82d8e-ba47-4cc4-a71b-03fdaed7e1b1" />
+
 
 ---
 
