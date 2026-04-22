@@ -15,7 +15,16 @@
 
 ---
 
-## 🤔 Wait, what even IS a stock or ETF?
+
+## ✨ Features
+
+### 📈 Overview — Your Main Dashboard
+The heart of the app. Type any ticker and instantly see:
+- A big, interactive price chart (you can zoom in, hover for exact prices, and more)
+- How the price is doing **today** (green = up, red = down)
+- Key numbers explained below 👇
+
+- ## 🤔 Wait, what even IS a stock or ETF?
 
 No worries if you're new to this — here's the plain-English version:
 
@@ -29,15 +38,9 @@ No worries if you're new to this — here's the plain-English version:
 
 This app lets you look up any of these and see how they're doing — visually, simply, and for free.
 
+
 ---
 
-## ✨ Features
-
-### 📈 Overview — Your Main Dashboard
-The heart of the app. Type any ticker and instantly see:
-- A big, interactive price chart (you can zoom in, hover for exact prices, and more)
-- How the price is doing **today** (green = up, red = down)
-- Key numbers explained below 👇
 
 ### 📊 What Do All Those Numbers Mean?
 
